@@ -3,7 +3,7 @@ import urllib2
 import json
 
 # Set the Places API key for your application
-AUTH_KEY = 'AIzaSyDkFPD-6VNXvZH2J11Gk93PE23L8RqDhR8'
+AUTH_KEY = 'AIzaSyBXZqTQqdKylR1J2jjkjBt8Lp_tPlIIEIM'
 
 # Define the location coordinates
 LOCATION = '37.787930,-122.4074990'
