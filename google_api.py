@@ -1,32 +1,51 @@
-# Import the relevant libraries
-import urllib2
+#!/usr/bin/python
+
 import json
+import urllib2
 
-# Set the Places API key for your application
-AUTH_KEY = 'AIzaSyBXZqTQqdKylR1J2jjkjBt8Lp_tPlIIEIM'
+import spot
 
-# Define the location coordinates
-LOCATION = '37.787930,-122.4074990'
+def api_key():
+    return 'AIzaSyBXZqTQqdKylR1J2jjkjBt8Lp_tPlIIEIM'
 
-# Define the radius (in meters) for the search
-RADIUS = 1
-
-def search_spots(location=LOCATION, radius=RADIUS):
-    # Compose a URL to query a predefined location with a radius of 5000 meters
+def search_spots(query, radius):
+    '''Search spots near the query, with radius (in meter)'''
+    location = search_location(query)
+    if location is None:
+        return None
     url = 'https://maps.googleapis.com/maps/api/place/search/json?'\
-          'location=%s&radius=%s&key=%s' % (LOCATION, RADIUS, AUTH_KEY)
-
-    # Send the GET request to the Place details service (using url from above)
-    response = urllib2.urlopen(url)
-
-    # Get the response and use the JSON library to decode the JSON
-    json_raw = response.read()
-    json_data = json.loads(json_raw) 
-    # Iterate through the results and print them to the console
+          'location=%s,%s&radius=%s&key=%s' % (location[0], location[1],
+                                               radius, api_key())
+    json_data = json.loads(urllib2.urlopen(url).read())
+    spots = []
     if json_data['status'] == 'OK':
         for place in json_data['results']:
-            print '%s: %s\n' % (place['name'], place['reference'])
+            json_detail = search_spot_detail(place['place_id'])
+            spots.append(spot.Spot(json_detail))
+    return spots
 
-# 1. Use place['reference'] like
-#    https://maps.googleapis.com/maps/api/place/details/json?reference=PLACE_REFERENCE&key=YOUR_API_KEY
-# 2. Opening hours can be opening_hours.periods[]
+def search_location(query):
+    '''Return a tuple (latitude, longitude), location of the queried place'''
+    address = urllib2.quote(query.replace(" ", "+"))
+    url = "https://maps.googleapis.com/maps/api/geocode/json?"\
+          "address=%s&key=%s" % (address, api_key())
+    json_data = json.loads(urllib2.urlopen(url).read())
+    if json_data["status"] == "OK":
+        loc = json_data["results"][0]["geometry"]["location"]
+        return loc["lat"], loc["lng"]
+    # Search failed
+    return None
+
+def search_spot_detail(place_id):
+    '''Return the spot's detail given place ID of Google API.'''
+    url = 'https://maps.googleapis.com/maps/api/place/details/json?'\
+          'placeid=%s&key=%s' % (place_id, api_key())
+    json_data = json.loads(urllib2.urlopen(url).read())
+    if json_data["status"] == "OK":
+        return json_data['result']
+    return None
+
+if __name__ == '__main__':
+   spots = search_spots('San Francisco', radius=5000)
+   for s in spots:
+       print s.get_name(), s.get_rating()
