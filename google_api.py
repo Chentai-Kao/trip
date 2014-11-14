@@ -49,4 +49,4 @@ if __name__ == '__main__':
    spots = search_spots('San Francisco', radius=5000)
    print 'Please enter duration for each spot (0 if not interested).'
    for s in spots:
-       s.duration = raw_input('%s(%s)' % (s.get_name(), s.get_rating()))
+       s.duration = raw_input('%s(rating:%s):' % (s.get_name(), s.get_rating()))
