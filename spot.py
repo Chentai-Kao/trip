@@ -1,7 +1,8 @@
 #!/usr/bin/python
 
 def get_travel_time(from_spot, to_spot):
-    raise Exception('TODO')
+    return 0.5
+    # raise Exception('TODO')
 
 class Spot():
     def __init__(self, json_data):
