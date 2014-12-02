@@ -80,7 +80,7 @@ class Spot():
             # not open today
             return None
         except KeyError: # when the data doesn't contain opening hour
-            return None
+            return 0, 2400
 
     def get_types(self):
         '''The spot's type, e.g. church, library, food, restaurant.'''
