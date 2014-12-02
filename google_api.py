@@ -52,7 +52,6 @@ def search_travel_time(spots):
     url = "https://maps.googleapis.com/maps/api/distancematrix/json?"\
           "origins=%s&destinations=%s&key=%s" % (loc, loc, api_key())
     json_data = json.loads(urllib2.urlopen(url).read())
-    print json_data
     matrix = []
     if json_data["status"] == "OK":
         for row in json_data["rows"]:
@@ -80,6 +79,7 @@ if __name__ == '__main__':
     #pickle.dump(spots, open('spots_cache', 'wb'))
 
     spots = pickle.load(open('spots_cache', 'rb'))
+    spots = spots[:10]
     travel_matrix = search_travel_time(spots)
     for i in xrange(len(spots)):
         dst = {}
