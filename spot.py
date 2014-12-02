@@ -6,10 +6,14 @@ def get_travel_time(from_spot, to_spot):
     return 0.5
     # raise Exception('TODO')
 
-def to_hour(s):
+def time_str_to_hour(s):
     '''Convert "1830" to 1850 (1800 for 18 hour, 50 for 0.5 hour)'''
     hour, minute = int(s[:2]), int(s[2:])
     return hour * 100 + int(round(float(minute) / 60 * 100))
+
+def minute_to_hour(sec):
+    '''Convert 5400 (sec) to 150 (1.5 hour)'''
+    return int(round(float(int(sec / 15)) / 4 / 60 * 100))
 
 class Spot():
     def __init__(self, json_data):
@@ -28,6 +32,10 @@ class Spot():
         '''Returns tuple (latitude, longitude).'''
         return (self.data['geometry']['location']['lat'],
                 self.data['geometry']['location']['lng'])
+    
+    def get_location_str(self):
+        location = self.get_location()
+        return str(location[0]) + "," + str(location[1])
 
     def get_rating(self):
         return self.data.get('rating', None)
@@ -62,11 +70,11 @@ class Spot():
             weekday = datetime.datetime.today().weekday()
             for openday in periods:
                 if openday['open']['day'] == weekday:
-                    open_time = to_hour(openday['open']['time'])
+                    open_time = time_str_to_hour(openday['open']['time'])
                     if openday['close']['day'] != weekday:
                         close_time = 2400
                     else:
-                        close_time = to_hour(openday['close']['time'])
+                        close_time = time_str_to_hour(openday['close']['time'])
                     return open_time, close_time
             # not open today
             return None

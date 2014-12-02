@@ -47,17 +47,30 @@ def search_spot_detail(place_id):
     return None
 
 def search_travel_time(spots):
+    loc = "|".join(map(lambda s: s.get_location_str(), spots))
     url = "https://maps.googleapis.com/maps/api/distancematrix/json?"\
-          "origins=Vancouver+BC|Seattle&destinations=San+Francisco|Victoria+BC&mode=bicycling&language=fr-FR&key=API_KEY"
+          "origins=%s&destinations=%s&key=%s" % (loc, loc, api_key())
+    json_data = json.loads(urllib2.urlopen(url).read())
+    results = []
+    if json_data["status"] == "OK":
+        for row in json_data["rows"]:
+            result_row = []
+            for element in row["elements"]:
+                seconds = element["duration"]["value"]
+                #result_row.append(
+    # Search failed
+    return None
 
 if __name__ == '__main__':
     #spots = search_spots('San Francisco', radius=5000)
     #pickle.dump(spots, open('spots_cache', 'wb'))
     spots = pickle.load(open('spots_cache', 'rb'))
+    for s in spots:
+        print s.get_duration()
+    #search_travel_time(spots)
     #print 'Please enter duration for each spot (0000 if not interested).'
     #print 'Format: hhmm. e.g. 0130 for 1 hour 30 minutes, 0200 for 2 hours.'
-    #spots = spots[:10]
     #for s in spots:
     #    duration = raw_input('%s(rating:%s):' % (s.get_name(), s.get_rating()))
-    #    s.duration = spot.to_hour(duration)
+    #    s.duration = spot.time_str_to_hour(duration)
     #pickle.dump(spots, open('spots_cache', 'wb'))
