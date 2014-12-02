@@ -38,7 +38,7 @@ class Spot():
         return str(location[0]) + "," + str(location[1])
 
     def get_rating(self):
-        return self.data.get('rating', None)
+        return float(self.data.get('rating', None)) / 5
 
     def get_opening_hour(self):
         '''Returns a tuple of today's (open, close), value in [0, 24].
