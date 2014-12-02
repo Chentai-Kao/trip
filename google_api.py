@@ -15,8 +15,9 @@ def search_spots(query, radius):
     if location is None:
         return None
     url = 'https://maps.googleapis.com/maps/api/place/search/json?'\
-          'location=%s,%s&radius=%s&key=%s&types=food' % (\
+          'location=%s,%s&radius=%s&key=%s' % (\
           location[0], location[1], radius, api_key())
+    print url
     json_data = json.loads(urllib2.urlopen(url).read())
     spots = []
     if json_data['status'] == 'OK':
@@ -73,16 +74,11 @@ def search_travel_time(spots):
     return None
 
 if __name__ == '__main__':
-    #spots = search_spots('San Francisco', radius=10000)
-    #for s in spots:
-    #    print s.get_types()
-    #pickle.dump(spots, open('spots_cache', 'wb'))
-    spots = pickle.load(open('spots_cache', 'rb'))
+    spots = search_spots('San Francisco', radius=5000)
     for s in spots:
-        print '--', s.get_name()
-        for u in spots:
-            if s != u:
-                print u.get_name(), s.get_travel_time(u.get_name())
+        print s.get_types()
+    pickle.dump(spots, open('spots_cache', 'wb'))
+    spots = pickle.load(open('spots_cache', 'rb'))
     #travel_matrix = search_travel_time(spots)
     #for i in xrange(len(spots)):
     #    dst = {}
