@@ -91,4 +91,6 @@ class Spot():
         self.travel_time = dst
 
     def get_travel_time(self, dst_name):
+        if dst_name == self.get_name():
+            return 0
         return self.travel_time[dst_name]
