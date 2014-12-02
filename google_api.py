@@ -79,6 +79,8 @@ if __name__ == '__main__':
     #pickle.dump(spots, open('spots_cache', 'wb'))
 
     spots = pickle.load(open('spots_cache', 'rb'))
+    for s in spots:
+        print s.get_name(), s.get_opening_hour()
     #travel_matrix = search_travel_time(spots)
     #for i in xrange(len(spots)):
     #    dst = {}
