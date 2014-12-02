@@ -42,7 +42,7 @@ class Spot():
         return float(self.data.get('rating', 2.5)) / 5
 
     def get_opening_hour(self):
-        '''Returns a tuple of today's (open, close), value in [0, 24].
+        '''Returns a tuple of today's (open, close), value in [0, 2400].
            (Note: in the data, always-open is represented as an open period
            containing day with value 0 and time with value 0000, and no close.)
            See a general example below:

@@ -14,10 +14,10 @@ def search_spots(query, radius):
     location = search_location(query)
     if location is None:
         return None
+    types = ['food', 'establishment', 'museum']
     url = 'https://maps.googleapis.com/maps/api/place/search/json?'\
-          'location=%s,%s&radius=%s&key=%s' % (\
-          location[0], location[1], radius, api_key())
-    print url
+          'location=%s,%s&radius=%s&types=%s&key=%s' % (\
+          location[0], location[1], radius, '|'.join(types), api_key())
     json_data = json.loads(urllib2.urlopen(url).read())
     spots = []
     if json_data['status'] == 'OK':
@@ -52,6 +52,7 @@ def search_travel_time(spots):
     url = "https://maps.googleapis.com/maps/api/distancematrix/json?"\
           "origins=%s&destinations=%s&key=%s" % (loc, loc, api_key())
     json_data = json.loads(urllib2.urlopen(url).read())
+    print json_data
     matrix = []
     if json_data["status"] == "OK":
         for row in json_data["rows"]:
@@ -74,18 +75,18 @@ def search_travel_time(spots):
     return None
 
 if __name__ == '__main__':
-    spots = search_spots('San Francisco', radius=5000)
-    for s in spots:
-        print s.get_types()
-    pickle.dump(spots, open('spots_cache', 'wb'))
+    #spots = search_spots('San Francisco', radius=5000)
+    #spots = [s for s in spots if 'lodging' not in s.get_types()] # remove hotel
+    #pickle.dump(spots, open('spots_cache', 'wb'))
+
     spots = pickle.load(open('spots_cache', 'rb'))
-    #travel_matrix = search_travel_time(spots)
-    #for i in xrange(len(spots)):
-    #    dst = {}
-    #    for j in xrange(len(spots)):
-    #        if i != j:
-    #            dst[spots[j].get_name()] = travel_matrix[i][j]
-    #    spots[i].set_travel_time(dst)
+    travel_matrix = search_travel_time(spots)
+    for i in xrange(len(spots)):
+        dst = {}
+        for j in xrange(len(spots)):
+            if i != j:
+                dst[spots[j].get_name()] = travel_matrix[i][j]
+        spots[i].set_travel_time(dst)
     #print 'Please enter duration for each spot (0000 if not interested).'
     #print 'Format: hhmm. e.g. 0130 for 1 hour 30 minutes, 0200 for 2 hours.'
     #for s in spots:
