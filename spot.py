@@ -11,9 +11,9 @@ def time_str_to_hour(s):
     hour, minute = int(s[:2]), int(s[2:])
     return hour * 100 + int(round(float(minute) / 60 * 100))
 
-def minute_to_hour(sec):
+def second_to_hour(sec):
     '''Convert 5400 (sec) to 150 (1.5 hour)'''
-    return int(round(float(int(sec / 15)) / 4 / 60 * 100))
+    return int(round(float(int(round(float(sec) / 60 / 30))) / 2 * 100))
 
 class Spot():
     def __init__(self, json_data):
@@ -84,3 +84,10 @@ class Spot():
     def get_types(self):
         '''The spot's type, e.g. church, library, food, restaurant.'''
         return self.data['types']
+
+    def set_travel_time(self, dst):
+        '''Set travel time of destinations (dict {spot_name => travel_time})'''
+        self.travel_time = dst
+
+    def get_travel_time(self, dst_name):
+        return self.travel_time[dst_name]

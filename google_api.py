@@ -51,13 +51,24 @@ def search_travel_time(spots):
     url = "https://maps.googleapis.com/maps/api/distancematrix/json?"\
           "origins=%s&destinations=%s&key=%s" % (loc, loc, api_key())
     json_data = json.loads(urllib2.urlopen(url).read())
-    results = []
+    matrix = []
     if json_data["status"] == "OK":
         for row in json_data["rows"]:
             result_row = []
             for element in row["elements"]:
                 seconds = element["duration"]["value"]
-                #result_row.append(
+                result_row.append(seconds)
+            matrix.append(result_row)
+        # Normalize travel time to range [min, max].
+        # Since diagonal entries are 0 (travel to itself), min must > 0.
+        unique_matrix = [matrix[i][j] for i in xrange(len(matrix))\
+                                      for j in xrange(len(matrix[i])) if i != j]
+        low, up = float(min(unique_matrix)), float(max(unique_matrix))
+        for i in xrange(len(matrix)):
+            for j in xrange(len(matrix[i])):
+                v = matrix[i][j]
+                matrix[i][j] = (v - low) / (up - low)
+        return matrix
     # Search failed
     return None
 
@@ -65,9 +76,13 @@ if __name__ == '__main__':
     #spots = search_spots('San Francisco', radius=5000)
     #pickle.dump(spots, open('spots_cache', 'wb'))
     spots = pickle.load(open('spots_cache', 'rb'))
-    for s in spots:
-        print s.get_duration()
-    #search_travel_time(spots)
+    #travel_matrix = search_travel_time(spots)
+    #for i in xrange(len(spots)):
+    #    dst = {}
+    #    for j in xrange(len(spots)):
+    #        if i != j:
+    #            dst[spots[j].get_name()] = travel_matrix[i][j]
+    #    spots[i].set_travel_time(dst)
     #print 'Please enter duration for each spot (0000 if not interested).'
     #print 'Format: hhmm. e.g. 0130 for 1 hour 30 minutes, 0200 for 2 hours.'
     #for s in spots:
