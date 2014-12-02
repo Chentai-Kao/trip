@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+import datetime
+
 def get_travel_time(from_spot, to_spot):
     raise Exception('TODO')
 
@@ -25,26 +27,48 @@ class Spot():
         return self.data.get('rating', None)
 
     def get_opening_hour(self):
-        '''Returns the array of open time. (Note: always-open is represented as
-           an open period containing day with value 0 and time with value 0000,
-           and no close.) See a general example below:
-         [
+        '''Returns a tuple of today's (open, close), value in [0, 24].
+           (Note: in the data, always-open is represented as an open period
+           containing day with value 0 and time with value 0000, and no close.)
+           See a general example below:
+        [
             {
-               "close" : {
-                  "day" : 1,
-                  "time" : "1800"
-               },
-               "open" : {
-                  "day" : 1,
-                  "time" : "1000"
-               }
+                "close" : {
+                    "day" : 1,
+                    "time" : "1800"
+                },
+                "open" : {
+                    "day" : 1,
+                    "time" : "1000"
+                }
             },
             ...
         ]
         '''
+        def to_hour(s):
+            '''Convert "1830" to 1850 (1800 for 18 hour, 50 for 0.5 hour)'''
+            hour, minute = int(s[:2]), int(s[2:])
+            return hour * 100 + int(round(float(minute) / 60 * 100))
         try:
-            return self.data['opening_hours']['periods']
-        except KeyError:
+            periods = self.data['opening_hours']['periods']
+            # always open
+            if len(periods) == 1 and periods[0]['open']['day'] == 0 and\
+                    periods[0]['open']['time'] == '0000' and\
+                    'close' not in periods[0]:
+                return 0, 2400
+            # general case
+            weekday = datetime.datetime.today().weekday()
+            for openday in periods:
+                if openday['open']['day'] == weekday:
+                    open_time = to_hour(openday['open']['time'])
+                    if openday['close']['day'] != weekday:
+                        close_time = 2400
+                    else:
+                        close_time = to_hour(openday['close']['time'])
+                    return open_time, close_time
+            # not open today
+            return None
+        except KeyError: # when the data doesn't contain opening hour
             return None
 
     def get_types(self):

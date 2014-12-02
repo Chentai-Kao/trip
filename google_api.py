@@ -47,9 +47,9 @@ def search_spot_detail(place_id):
     return None
 
 if __name__ == '__main__':
-   #spots = search_spots('San Francisco', radius=5000)
-   #pickle.dump(spots, open('spots_cache', 'wb'))
-   spots = pickle.load(open('spots_cache', 'rb'))
-   print 'Please enter duration for each spot (0 if not interested).'
-   for s in spots:
-       s.duration = raw_input('%s(rating:%s):' % (s.get_name(), s.get_rating()))
+    #spots = search_spots('San Francisco', radius=5000)
+    #pickle.dump(spots, open('spots_cache', 'wb'))
+    spots = pickle.load(open('spots_cache', 'rb'))
+    #print 'Please enter duration for each spot (0 if not interested).'
+    #for s in spots:
+    #    s.duration = raw_input('%s(rating:%s):' % (s.get_name(), s.get_rating()))
