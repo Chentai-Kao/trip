@@ -79,14 +79,13 @@ if __name__ == '__main__':
     #pickle.dump(spots, open('spots_cache', 'wb'))
 
     spots = pickle.load(open('spots_cache', 'rb'))
-    spots = spots[:10]
-    travel_matrix = search_travel_time(spots)
-    for i in xrange(len(spots)):
-        dst = {}
-        for j in xrange(len(spots)):
-            if i != j:
-                dst[spots[j].get_name()] = travel_matrix[i][j]
-        spots[i].set_travel_time(dst)
+    #travel_matrix = search_travel_time(spots)
+    #for i in xrange(len(spots)):
+    #    dst = {}
+    #    for j in xrange(len(spots)):
+    #        if i != j:
+    #            dst[spots[j].get_name()] = travel_matrix[i][j]
+    #    spots[i].set_travel_time(dst)
     #print 'Please enter duration for each spot (0000 if not interested).'
     #print 'Format: hhmm. e.g. 0130 for 1 hour 30 minutes, 0200 for 2 hours.'
     #for s in spots:
