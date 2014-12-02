@@ -51,5 +51,9 @@ if __name__ == '__main__':
     #pickle.dump(spots, open('spots_cache', 'wb'))
     spots = pickle.load(open('spots_cache', 'rb'))
     #print 'Please enter duration for each spot (0 if not interested).'
+    #print 'Format: hhmm. e.g. 0130 for 1 hour 30 minutes, 0200 for 2 hours.'
+    #spots = spots[:9]
     #for s in spots:
-    #    s.duration = raw_input('%s(rating:%s):' % (s.get_name(), s.get_rating()))
+    #    duration = raw_input('%s(rating:%s):' % (s.get_name(), s.get_rating()))
+    #    s.duration = spot.to_hour(duration)
+    #pickle.dump(spots, open('spots_cache', 'wb'))

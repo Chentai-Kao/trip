@@ -6,6 +6,11 @@ def get_travel_time(from_spot, to_spot):
     return 0.5
     # raise Exception('TODO')
 
+def to_hour(s):
+    '''Convert "1830" to 1850 (1800 for 18 hour, 50 for 0.5 hour)'''
+    hour, minute = int(s[:2]), int(s[2:])
+    return hour * 100 + int(round(float(minute) / 60 * 100))
+
 class Spot():
     def __init__(self, json_data):
         '''data_json should be place_detail['result'] in the JSON.'''
@@ -46,10 +51,6 @@ class Spot():
             ...
         ]
         '''
-        def to_hour(s):
-            '''Convert "1830" to 1850 (1800 for 18 hour, 50 for 0.5 hour)'''
-            hour, minute = int(s[:2]), int(s[2:])
-            return hour * 100 + int(round(float(minute) / 60 * 100))
         try:
             periods = self.data['opening_hours']['periods']
             # always open
