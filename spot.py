@@ -23,6 +23,7 @@ class Spot():
 
     def get_duration(self):
         '''Duration in hours, e.g. 1.25 for 1 hour 15 minutes.'''
+        # print "duration: ", self.duration
         return self.duration
 
     def get_name(self):
@@ -60,6 +61,7 @@ class Spot():
             ...
         ]
         '''
+        # return 0, 2400
         try:
             periods = self.data['opening_hours']['periods']
             # always open

@@ -89,6 +89,10 @@ class BacktrackingSearch():
             print "Found %d optimal assignments with weight %f in %d operations" % \
                 (self.numOptimalAssignments, self.optimalWeight, self.numOperations)
             print "First assignment took %d operations" % self.firstAssignmentNumOperations
+            print "optimal assignment: ", self.optimalAssignment
+            for i in range(10):
+                print self.optimalAssignment['spot_' + str(i)], self.optimalAssignment['time_' + str(i)], self.optimalAssignment[('sum', 'sum_' + str(i))]
+
         else:
             print "No solution was found."
 
@@ -171,6 +175,7 @@ class BacktrackingSearch():
         @param weight: The weight of the current partial assignment.
         """
         # print "(in backtrack) assignment = ", assignment
+        # raw_input("assignment")
         self.numOperations += 1
         assert weight > 0
         if numAssigned == self.csp.numVars:
@@ -180,6 +185,18 @@ class BacktrackingSearch():
             for var in range(self.csp.numVars):
                 newAssignment[self.csp.varNames[var]] = self.csp.valNames[var][assignment[var]]
             self.allAssignments.append(newAssignment)
+            print "*******************"
+            print "numAssignments: ",self.numAssignments ," weight: ", weight
+            for i in range(10):
+                if newAssignment['spot_' + str(i)] != None:
+                    spot_name = newAssignment['spot_' + str(i)].get_name()
+                    spot_open_time = newAssignment['spot_' + str(i)].get_opening_hour()
+                else:
+                    spot_name = None
+                    spot_open_time = None
+                print spot_name, newAssignment['time_' + str(i)], newAssignment[('sum', 'sum_' + str(i))], spot_open_time
+            print "*******************" 
+            # raw_input("find answer!")
 
             if len(self.optimalAssignment) == 0 or weight >= self.optimalWeight:
                 if weight == self.optimalWeight:
@@ -199,6 +216,7 @@ class BacktrackingSearch():
         # Least constrained value (LCV) is not used in this assignment
         # so just use the original ordering
         ordered_values = self.domains[var]
+        # print "var & ordered_values : ", self.csp.varNames[var], ordered_values
 
         # Continue the backtracking recursion using |var| and |ordered_values|.
         if not self.mac:
@@ -227,7 +245,10 @@ class BacktrackingSearch():
                     # enforce arc consistency
                     self.arc_consistency_check(var)
 
-                    self.backtrack(assignment, numAssigned + 1, weight * deltaWeight)
+                    # Run deeper only if current weight is greater than optimal weight
+                    if weight * deltaWeight > self.optimalWeight:
+                        self.backtrack(assignment, numAssigned + 1, weight * deltaWeight)
+
                     # restore the previous domains
                     self.domains = localCopy
                     assignment[var] = None
